@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Reedit!</title>
+  <link rel="icon" type="image/png" href="http://cdn.akamai.steamstatic.com/steamcommunity/public/images/clans/27886209/0038eeb4d15fbb4a0098eeb6b8c2d534122a93d2.png">
+  <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+  <link rel="stylesheet" href="../css/styleHome.css">
+  <!--responsive-->
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+</head>
+
+<body ng-app="myApp" ng-controller="myCtrl">
+
+<!--Header-->
+<div id="header" class="container"> 
+  
+  <div class="col-md-12">
+    <nav class="navbar navbar-default navbar-fixed-top">
+      
+      <div class="container">
+      <!-- menu navegación -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-nav-collapse" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand logo" href="#">
+          <img align="left" class="img img-logo img-responsive" src="https://logodownload.org/wp-content/uploads/2018/02/reddit-logo.png" />
+        </a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+     <div class="collapse navbar-collapse" id="main-nav-collapse">
+       <ul id="site-nav" class="nav navbar-nav">
+        </ul>
+      
+
+        <ul class="nav navbar-nav navbar-right">
+
+          <li class="dropdown">
+            <a href="#" class="glyphicon glyphicon-user" class="dropdown-toggle name-dropdown" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu">
+              <li><a onclick="javascript:login();">Salir</a></li>
+            </ul>
+          </li>
+
+        </ul>
+
+      </div>
+    </nav>
+</div>
+
+<!--contenedor-->
+<div id="main-content" class="container">
+  
+  <!--menu de amigos-->
+  <div id="friends-bar" class="col-md-3 col-md-push-9 hidden-sm hidden-xs" ng-cloak>
+    
+    <!--buscar a los amigos-->
+    <div class="row">
+      <div class="col-md-12">
+        <input ng-model="friendSearchInput.text" class="form-control" placeholder="Buscar en Reddit" ng-change="searchUsers()"/>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        
+        <div class="friends-list">
+          
+          <!--lista de amigos-->
+          <div class="friends-only" ng-show="data.friends.length">
+            <hr>
+            <div class="friend-count hidden">showing {{ data.friendCount }} of {{ data.friendCount }}</div>
+
+          </div>
+          <!--Fin lista de amigos-->
+          
+          <!--Agregar a un amigo-->
+          <div class="pending-friend-requests" ng-show="pendingFriendRequests.length">
+            <hr>
+            
+            <div class="friends-search">
+              <span>Solicitud pendiente. </span>
+            </div>
+
+          </div>
+          <!--Fin de agregar amigo-->          
+          
+          <!--resultado al buscar un amigo-->
+          <div class="search-results" ng-show="friendSearchInput.text.length">
+            <hr>
+            
+            <div class="friends-search">
+              <span ng-show=(usersSearchResults.length)>Resultados encontrados</span>
+              <span ng-show=(!usersSearchResults.length)>No se encontraron resultados</span>
+            </div>
+
+             <!--Perfil del amigo-->
+            <div class="panel panel-default friend-profile" ng-repeat="friend in usersSearchResults" ng-cloak>
+              <div class="friend-img hidden-md">
+                <img class="img" ng-src="{{ friend.imgURL }}"/>
+              </div>
+              <div class="friend-info">
+                <div class="friend-name">
+                  {{ friend.firstName + " " + friend.lastName }}
+                </div>
+                <div class="friends-friends">
+                  {{ friend.friendsInCommon }} Amigos en común
+                </div>
+                <div class="friend-btn-group">
+                  <div class="btn-group">
+                    <button class="btn btn-primary btn-xs" ng-click="sendFriendRequest(friend)">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      Agregar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--Fin del perfil del amigo-->
+
+          </div>
+          <!--Fin de la busqueda-->
+
+          <hr>
+          
+          <!--Información del perfil-->
+          <div class="panel panel-default" style="text-align: center">
+            
+            <h4>Acerca de la comunidad</h4>
+            <h6>
+               A subreddit for (almost) anything related to games - video games, board games, card games, etc. (but not sports).<br><br>
+              <p>   <span class="glyphicon glyphicon-calendar" aria-hidden="true"> </span> Creado el 17 sept 2007</p>
+               <p>  <span class="glyphicon glyphicon-tag" aria-hidden="true"> </span> r/gaming temas</p>
+      
+            </h6>
+           <button id="buttoninfo">Gaming</button> <br><br>
+            
+          </div>
+          
+          <!--Información del perfil-->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--Fin del menu amigos-->
+  
+  <!--Información del usuario-->
+  <div id="personal-bar" class="col-md-3 col-md-pull-3 hidden-sm hidden-xs">
+    <div class="panel panel-default" ng-cloak>
+      <div class="profile-pic" ng-click="newProfileImg()">
+        <img src="https://cdn-icons-png.flaticon.com/512/52/52191.png" height="100%">
+        <img id="profile-img" ng-src="{{ data.user.imgURL }}" height="100%"/>
+        <div class="upload-profile-pic-btn">
+          Cambiar Foto
+        </div>
+        <input type="file" id="profileImgInput" class="hidden">
+      </div>
+      <div class="users-name">
+        <h4>{{ data.user.firstName + " " + data.user.lastName }}</h3>
+           <button id="buttoninfo">Unirse</button> <br><br>
+      </div>
+      
+    </div>
+  
+  </div>
+  <!--Fin información del usuario-->
+
+  <div id="main-content" class="col-md-6 col-md-pull-3">
+
+    <!--Nueva publicación-->
+    <div id="post-row" class="row">
+      <div class="col-md-12">
+        <form>
+            <textarea class="form-control post-textarea" rows="1" style="resize:none" placeholder="Nueva publicación" ng-keyup="createNewPostOnEnter($event)" ng-model="newPost.text"></textarea>
+        </form>     
+      </div>
+    </div>
+    <!--Comentarios-->
+
+    <hr>
+
+    <div id="main feed" class="row">
+      <div class="col-md-12">
+        <div id="stream-well" class="">
+
+          <div class="panel panel-default" ng-repeat="post in stream | orderBy:'timestamp':'reverse' " id="post{{post.id}}" ng-cloak>
+            <div class="panel-body img-panel">
+              <button aria-label="Close" class="close" data-dismiss="modal" type="button" ng-show="post.user.id==data.user.id" ng-click="deletePost(post)">
+                <span aria-hidden="true">×</span>
+              </button>
+              <blockquote>
+                <p class="wordwrap" ng-bind-html="post.textBody"></p>
+                <footer>{{ post.user.firstName + " " + post.user.lastName }} {{ post.timestamp | date : "h:mm a MMM dd',' yyyy" }} </footer>
+              </blockquote>
+              <img ng-src="{{ post.imgURL }}" ng-show="{{ post.imgURL }}" class="img-responsive" alt="Responsive image" data-toggle="modal" data-target="#img-modal" ng-click="openImgModal(post)">
+              <div class="videoWrapper" ng-show="{{ post.youtubeURL }}">
+                <iframe width="560" height="315" ng-src="{{ post.youtubeURL }}" frameborder="0" allowfullscreen></iframe>
+              </div>
+              <div class="post-btn-group">
+                <button id="{{ post.id }}" class="btn-upvote btn-md" ng-click="upvote(post)">
+                  <span class="glyphicon glyphicon-sort" aria-hidden="true"></span>
+                  <span class="sweet-text" ng-if="!isUpvoted(post)">Like</span>
+                  <span class="sweet-text" ng-if="isUpvoted(post)">Dislike</span>
+                    <span class="badge sweet-badge">{{ post.sweet.length }}</span>
+                </button>
+                <button class="btn-comment btn-md" ng-click="openComments(post)">
+                  <span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+                  Comments <span class="badge">{{ post.comments.length }}</span>
+                </button>
+                <button >
+                  <span class="glyphicon glyphicon-share-alt" aria-hidden="true"></span>
+                  <span class="sweet-text">Compartir</span>
+                </button>
+                <button >
+                  <span class="glyphicon glyphicon-bookmark" aria-hidden="true"></span>
+                  <span class="sweet-text">Guardar</span>
+                </button>
+              </div>
+              <div class="panel-footer post-reply comments" style="display: none;">
+                <div class="comment" ng-repeat="comment in post.comments">
+                  <blockquote>
+                    <p class="wordwrap">{{ comment.textBody }}</p>
+                    <footer>{{ comment.user.firstName + " " + comment.user.lastName }}, {{ comment.timestamp | date : "h:mm a MMM dd',' yyyy" }} </footer>
+                  </blockquote>
+                </div>
+                <form>
+                  <textarea class="form-control reply-textarea" rows="1" style="resize:none" placeholder="Publica una respuesta..." ng-model="post.newReply.text" ng-keyup="createNewReply($event, post)"></textarea>
+                </form>
+              </div>
+            </div>
+          </div>
+    
+        </div>
+      </div>
+    </div>
+
+  </div>
+  
+</div>
+  
+</body>
+<!-- links -->
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js'></script>
+<script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/64754/autosize.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.3.14/angular.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular-file-upload/1.1.6/angular-file-upload.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.1/angular-sanitize.min.js'></script>
+<script  src="../js/scriptHome.js"></script>
+<script  src="../js/scriptLogin.js"></script>
+</body>
+</html>
